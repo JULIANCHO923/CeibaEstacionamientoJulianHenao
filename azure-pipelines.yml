@@ -21,3 +21,37 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'build'
+
+- task: SonarQubePrepare@4
+  inputs:
+    SonarQube: 'Sonar Prueba Dany Barrientos'
+    scannerMode: 'Other'
+    extraProperties: |
+      # Información del proyecto raíz
+      sonar.projectKey=co.com.ceiba.estacionamiento.julian.henao
+      sonar.projectName=Ceiba-Estacionamiento(julian.henao)
+      sonar.projectDescription=Proyecto de ADN Ceiba
+      sonar.projectVersion=1.0
+      
+      sonar.sources=src/main/java
+      #Rutas separadas por comas a directorios que contienen los archivos compilados (.class) correspondientes a sus archivos de origen
+      sonar.java.binaries=build/classes/java/main
+      
+      #Sonar donde esta las pruebas en el proyecto
+      sonar.tests=src/test/java
+      #Rutas separadas por comas a directorios que contienen los archivos compilados (.class) correspondientes a los archivos de prueba
+      sonar.java.test.binaries=build/classes/java/test
+      
+      #Importar informes de cobertura de código JaCoCo
+      sonar.jacoco.reportPaths=build/jacoco/test.exec,build/jacoco/iTest.exec
+      
+      #Importar informes de ejecución de pruebas (formato Surefire XML).
+      sonar.junit.reportPaths =build/test-results/test,build/test-results/iTest
+      #Exclusiones de código
+      sonar.exclusions=**/modelo/**,**/convertidor/**
+
+      - task: SonarQubeAnalyze@4
+
+      - task: SonarQubePublish@4
+        inputs:
+          pollingTimeoutSec: '300'
