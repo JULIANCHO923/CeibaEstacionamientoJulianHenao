@@ -58,6 +58,7 @@ trigger:
         SonarQube: 'Sonar local PC Julian'
         scannerMode: 'CLI'
         configMode: 'file'
+        extraProperties: 'sonar.projectVersion=$(Build.BuildNumber)'
       displayName: 'Preparando análisis estático de código'
     
     - task: SonarQubeAnalyze@4
