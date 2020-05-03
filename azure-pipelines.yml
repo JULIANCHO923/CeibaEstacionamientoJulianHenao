@@ -63,3 +63,15 @@ trigger:
     
     - task: SonarQubeAnalyze@4
       displayName: 'Ejecutar SonarQube'
+
+      
+    - task: Gradle@2
+    inputs:
+      gradleWrapperFile: 'gradlew'
+      workingDirectory: '.'
+      tasks: 'build -x test'
+      publishJUnitResults: false
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: $(jdk_version)
+      sonarQubeRunAnalysis: false
+    displayName: 'Build artefacto'
