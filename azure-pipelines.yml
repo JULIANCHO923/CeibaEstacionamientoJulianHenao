@@ -1,0 +1,64 @@
+trigger:
+    - master
+    
+    strategy:
+      matrix:
+        jdk10_linux:
+          imageName: "ubuntu-16.04"
+          jdk_version: "1.10"
+        jdk11_windows:
+          imageName: "vs2017-win2016"
+          jdk_version: "1.11"
+      maxParallel: 2
+    
+    pool:
+      vmImage: $(imageName)
+          
+    - task: Gradle@2
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        workingDirectory: '.'
+        tasks: 'compileJava'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: $(jdk_version)
+        sonarQubeRunAnalysis: false
+      displayName: 'Compilar proyecto Java'
+
+    - task: Gradle@2
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        workingDirectory: '.'
+        tasks: 'test'
+        publishJUnitResults: true
+        testResultsFiles: '**/build/test-results/test/*.xml'
+        testRunTitle: 'Pruebas unitarias'
+        codeCoverageToolOption: 'JaCoCo'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: $(jdk_version)
+        sonarQubeRunAnalysis: false
+      displayName: 'Ejecución de pruebas unitarias'
+    
+    - task: Gradle@2
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        workingDirectory: '.'
+        tasks: 'iTest'
+        publishJUnitResults: true
+        testResultsFiles: '**/build/test-results/iTest/*.xml'
+        testRunTitle: 'Pruebas de integración'
+        codeCoverageToolOption: 'JaCoCo'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: $(jdk_version)
+        sonarQubeRunAnalysis: false
+      displayName: 'Ejecución de pruebas de integración'
+  
+    - task: SonarQubePrepare@4
+      inputs:
+        SonarQube: 'Sonar local PC Julian'
+        scannerMode: 'CLI'
+        configMode: 'file'
+      displayName: 'Preparando análisis estático de código'
+    
+    - task: SonarQubeAnalyze@4
+      displayName: 'Ejecutar SonarQube'
