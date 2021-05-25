@@ -50,4 +50,4 @@ jobs:
         app-name: 'holamundojh'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_9a539dbf29f3478abe715e8f16be4a47 }}
-        package: '*.jar'
+        package: '*.war'
